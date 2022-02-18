@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 const Search = () => {
   const [term, setTerm] = useState('');
   const [result, setResult] = useState([]);
-  console.log(result);
+
   useEffect(() => {
     const search = async () => {
       const { data } = await axios.get('https://en.wikipedia.org/w/api.php', {
@@ -16,24 +16,36 @@ const Search = () => {
           srsearch: term,
         },
       });
-      setResult(data);
+      setResult(data.query.search);
     };
     if (term) {
       search();
     }
   }, [term]);
-
-  return (
-    <div className='ui form'>
-      <div className='field'>
-        <label>Enter Search Term</label>
-        <input
-          type='text'
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          className='input'
-        />
+  const renderedResults = result.map((res) => {
+    return (
+      <div className='item' key={res.pageid}>
+        <div className='content'>
+          <div className='header'>{res.title}</div>
+          <span dangerouslySetInnerHTML={{ __html: res.snippet }}></span>
+        </div>
       </div>
+    );
+  });
+  return (
+    <div>
+      <div className='ui form'>
+        <div className='field'>
+          <label>Enter Search Term</label>
+          <input
+            type='text'
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            className='input'
+          />
+        </div>
+      </div>
+      <div className='ui celled list'>{renderedResults}</div>
     </div>
   );
 };
