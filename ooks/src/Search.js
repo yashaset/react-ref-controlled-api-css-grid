@@ -16,18 +16,32 @@ const Search = () => {
           srsearch: term,
         },
       });
+      //   console.log(data);
       setResult(data.query.search);
     };
-    if (term) {
-      search();
-    }
+    const timeoutId = setTimeout(() => {
+      if (term) {
+        search();
+      }
+    }, 500);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [term]);
   const renderedResults = result.map((res) => {
     return (
       <div className='item' key={res.pageid}>
-        <div className='content'>
-          <div className='header'>{res.title}</div>
-          <span dangerouslySetInnerHTML={{ __html: res.snippet }}></span>
+        <div className='right floated content'>
+          <a
+            className='ui button'
+            href={`https://en.wikipedia.org?curid=${result.pageid}`}
+          >
+            Go
+          </a>
+          <div className='content'>
+            <div className='header'>{res.title}</div>
+            <span dangerouslySetInnerHTML={{ __html: res.snippet }}></span>
+          </div>
         </div>
       </div>
     );
